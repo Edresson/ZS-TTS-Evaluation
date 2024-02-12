@@ -26,3 +26,27 @@ Using cache found in /root/.cache/torch/hub/tarepan_SpeechMOS_v1.2.0
 Language Markdown results Table saved at: Evaluation/YourTTS_XTTS/metrics_markdown_table.txt
 CSV with Language Ranking saved at: Evaluation/YourTTS_XTTS/metrics.csv
 CSV with all samples metrics saved at: Evaluation/YourTTS_XTTS/metrics_utterance_level.csv
+Using cache found in /root/.cache/torch/hub/tarepan_SpeechMOS_v1.2.0
+/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+  0%|          | 0/11 [00:00<?, ?it/s]  0%|          | 0/11 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/raid/edresson/dev/Paper/TTS-evaluation-public/eval_TTS.py", line 143, in <module>
+    speaker_embedding = get_ecapa2_spk_embedding(ref_wav)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/raid/edresson/dev/Paper/TTS-evaluation-public/eval_TTS.py", line 50, in get_ecapa2_spk_embedding
+    audio, sr = torchaudio.load(path)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/utils.py", line 204, in load
+    return backend.load(uri, frame_offset, num_frames, normalize, channels_first, format, buffer_size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/ffmpeg.py", line 336, in load
+    return load_audio(os.path.normpath(uri), frame_offset, num_frames, normalize, channels_first, format)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/ffmpeg.py", line 100, in load_audio
+    return torch.ops.torchaudio.compat_load(src, format, filter, channels_first)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torch/_ops.py", line 692, in __call__
+    return self._op(*args, **kwargs or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to open the input "Evaluation/References_DAPS/ar_george_00000000.wav" (No such file or directory).

@@ -2,3 +2,6 @@
 .git
 .git/*
 *.pyc
+Evaluation/FT/
+*.out
+*.log
