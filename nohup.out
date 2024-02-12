@@ -1,52 +1,0 @@
-Using cache found in /root/.cache/torch/hub/tarepan_SpeechMOS_v1.2.0
-/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
-  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
-  0%|          | 0/20 [00:00<?, ?it/s]  5%|▌         | 1/20 [03:57<1:15:10, 237.39s/it] 10%|█         | 2/20 [07:29<1:06:42, 222.34s/it] 15%|█▌        | 3/20 [10:57<1:01:14, 216.12s/it] 20%|██        | 4/20 [14:19<56:03, 210.23s/it]   25%|██▌       | 5/20 [17:32<51:04, 204.30s/it] 30%|███       | 6/20 [20:46<46:48, 200.62s/it] 35%|███▌      | 7/20 [23:57<42:47, 197.47s/it] 40%|████      | 8/20 [27:03<38:47, 193.97s/it] 45%|████▌     | 9/20 [30:04<34:47, 189.73s/it] 50%|█████     | 10/20 [32:57<30:47, 184.73s/it] 55%|█████▌    | 11/20 [35:52<27:14, 181.60s/it] 60%|██████    | 12/20 [38:43<23:47, 178.48s/it] 65%|██████▌   | 13/20 [41:29<20:23, 174.79s/it] 70%|███████   | 14/20 [44:19<17:19, 173.29s/it] 75%|███████▌  | 15/20 [47:02<14:10, 170.18s/it] 80%|████████  | 16/20 [49:43<11:09, 167.35s/it] 85%|████████▌ | 17/20 [52:22<08:14, 164.82s/it] 90%|█████████ | 18/20 [54:54<05:21, 160.98s/it] 95%|█████████▌| 19/20 [57:19<02:36, 156.22s/it]100%|██████████| 20/20 [59:36<00:00, 150.55s/it]100%|██████████| 20/20 [59:36<00:00, 178.85s/it]
-/raid/edresson/dev/Paper/TTS-evaluation-public/utils/export.py:23: FutureWarning: The default value of numeric_only in DataFrame.mean is deprecated. In a future version, it will default to False. In addition, specifying 'numeric_only=None' is deprecated. Select only valid columns or specify the value of numeric_only to silence this warning.
-  df_lang_with_std.loc['mean'] = df_lang.mean().round(4)
-|      | Language   |     CER | UTMOS         |   SECS |
-|:-----|:-----------|--------:|:--------------|-------:|
-| 0    | ar         | 11.1713 | 2.6645 ± 0.35 | 0.4412 |
-| 1    | cs         |  4.0174 | 3.1426 ± 0.32 | 0.4505 |
-| 2    | de         |  2.2411 | 3.1725 ± 0.33 | 0.4638 |
-| 3    | en         |  2.9727 | 3.6869 ± 0.29 | 0.5711 |
-| 4    | es         |  1.0926 | 3.0133 ± 0.3  | 0.4895 |
-| 5    | fr         |  3.3965 | 2.9516 ± 0.32 | 0.4404 |
-| 6    | hu         |  4.5098 | 3.1613 ± 0.33 | 0.4827 |
-| 7    | it         |  1.701  | 3.0304 ± 0.32 | 0.4542 |
-| 8    | ja         | 10.2808 | 3.2942 ± 0.3  | 0.4874 |
-| 9    | ko         |  8.8567 | 3.238 ± 0.31  | 0.4841 |
-| 10   | nl         |  3.4228 | 3.2192 ± 0.29 | 0.4286 |
-| 11   | pl         |  1.5925 | 3.1562 ± 0.3  | 0.4588 |
-| 12   | pt         |  1.5481 | 3.159 ± 0.32  | 0.4715 |
-| 13   | ru         |  2.8566 | 3.0633 ± 0.32 | 0.4641 |
-| 14   | tr         |  2.6367 | 3.1123 ± 0.31 | 0.4859 |
-| 15   | zh         | 14.422  | 3.3507 ± 0.33 | 0.4825 |
-| mean | nan        |  4.7949 | 3.151 ± 0.21  | 0.4723 |
-Language Markdown results Table saved at: Evaluation/YourTTS_XTTS/metrics_markdown_table.txt
-CSV with Language Ranking saved at: Evaluation/YourTTS_XTTS/metrics.csv
-CSV with all samples metrics saved at: Evaluation/YourTTS_XTTS/metrics_utterance_level.csv
-Using cache found in /root/.cache/torch/hub/tarepan_SpeechMOS_v1.2.0
-/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torch/nn/utils/weight_norm.py:30: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
-  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
-  0%|          | 0/11 [00:00<?, ?it/s]  0%|          | 0/11 [00:00<?, ?it/s]
-Traceback (most recent call last):
-  File "/raid/edresson/dev/Paper/TTS-evaluation-public/eval_TTS.py", line 143, in <module>
-    speaker_embedding = get_ecapa2_spk_embedding(ref_wav)
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/raid/edresson/dev/Paper/TTS-evaluation-public/eval_TTS.py", line 50, in get_ecapa2_spk_embedding
-    audio, sr = torchaudio.load(path)
-                ^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/utils.py", line 204, in load
-    return backend.load(uri, frame_offset, num_frames, normalize, channels_first, format, buffer_size)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/ffmpeg.py", line 336, in load
-    return load_audio(os.path.normpath(uri), frame_offset, num_frames, normalize, channels_first, format)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torchaudio/_backend/ffmpeg.py", line 100, in load_audio
-    return torch.ops.torchaudio.compat_load(src, format, filter, channels_first)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/miniconda3/envs/TTS/lib/python3.11/site-packages/torch/_ops.py", line 692, in __call__
-    return self._op(*args, **kwargs or {})
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-RuntimeError: Failed to open the input "Evaluation/References_DAPS/ar_george_00000000.wav" (No such file or directory).
