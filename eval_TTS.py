@@ -8,7 +8,7 @@ from utils.stt import FasterWhisperSTT
 import torchaudio
 from tqdm import tqdm
 from huggingface_hub import hf_hub_download
-from utils.generic_utils import compute_cer, normalize_text
+from utils.generic_utils import compute_cer, normalize_text, torch_rms_norm
 
 from utils.export import export_metrics
 
@@ -17,6 +17,8 @@ from tqdm import tqdm
 import argparse
 from argparse import RawTextHelpFormatter
 import librosa
+import tempfile
+from pydub import AudioSegment
 
 # set seed to ensures reproducibility
 def set_seed(random_seed=1234):
@@ -46,11 +48,17 @@ device = "cuda" if CUDA_AVAILABLE else "cpu"
 ecapa2_file = hf_hub_download(repo_id='Jenthe/ECAPA2', filename='ecapa2.pt', cache_dir=None)
 ecapa2 = torch.jit.load(ecapa2_file, map_location='cpu').to(device)
 
-def get_ecapa2_spk_embedding(path, model_sr=16000):
+def get_ecapa2_spk_embedding(path, ref_dBFS=None, model_sr=16000):
     audio, sr = torchaudio.load(path)
     # sample rate of 16 kHz expected
     if sr != model_sr:
         audio = torchaudio.functional.resample(audio, sr, model_sr)
+
+    # RMS norm based on the reference audio dBFS it make all models output in the same db level and it avoid issues
+    if ref_dBFS is not None:
+        audio = torch_rms_norm(audio, db_level=ref_dBFS)
+
+    # compute speaker embedding
     embed = ecapa2(audio.to(device))
     # ensures that l2 norm is applied on output
     embed = torch.nn.functional.normalize(embed, p=2, dim=1)
@@ -62,15 +70,18 @@ def get_ecapa2_spk_embedding(path, model_sr=16000):
 # uses UTMOS (https://arxiv.org/abs/2204.02152) Open source (https://github.com/tarepan/SpeechMOS) following https://arxiv.org/abs/2311.12454
 mos_predictor = torch.hub.load("tarepan/SpeechMOS:v1.2.0", "utmos22_strong", trust_repo=True).to(device)
 
-def compute_UTMOS(path):
+def compute_UTMOS(path, ref_dBFS):
     # audio, sr = torchaudio.load(path)
     audio, sr = librosa.load(path, sr=None, mono=True)
     audio = torch.from_numpy(audio).unsqueeze(0)
+    # RMS norm based on the reference audio dBFS it make all models output in the same db level and it avoid issues
+    audio = torch_rms_norm(audio, db_level=ref_dBFS)
+    # predict UTMOS
     score = mos_predictor(audio.to(device), sr).item()
     return score
 
 
-def compute_metrics(tts_wav, ref_wav, gt_text, ref_speaker_embedding=None,  language="en", debug=False):
+def compute_metrics(tts_wav, ref_wav, gt_text, ref_speaker_embedding=None,  language="en", debug=False, ref_dBFS=None):
     language = language.split("-")[0]  # remove the region
     transcription = transcriber.transcribe_audio(tts_wav, language=language)
 
@@ -82,10 +93,10 @@ def compute_metrics(tts_wav, ref_wav, gt_text, ref_speaker_embedding=None,  lang
     cer_tts = compute_cer(gt_text_normalized, transcription_normalized) * 100
 
     # compute UTMOS
-    mos = compute_UTMOS(tts_wav)
+    mos = compute_UTMOS(tts_wav, ref_dBFS)
 
     # compute SECS using ECAPA2 model
-    gen_speaker_embedding = get_ecapa2_spk_embedding(tts_wav)
+    gen_speaker_embedding = get_ecapa2_spk_embedding(tts_wav, ref_dBFS)
     gt_speaker_embedding = torch.FloatTensor(ref_speaker_embedding).unsqueeze(0)
     gen_speaker_embedding = torch.FloatTensor(gen_speaker_embedding).unsqueeze(0)
     secs = torch.nn.functional.cosine_similarity(gt_speaker_embedding, gen_speaker_embedding).item()
@@ -137,12 +148,24 @@ if __name__ == "__main__":
 
     metadata_list = []
     metadata_list_full = []
+    missing_files = 0
     # group by using speaker reference
     df_speaker = DF.groupby('speaker_reference')
     for ref_wav, df_group in tqdm(df_speaker):
         speaker_embedding = get_ecapa2_spk_embedding(ref_wav)
+        # get reference dBFS
+        ref_dBFS = AudioSegment.from_file(ref_wav).dBFS
+
         for _, row in df_group.iterrows():
-            meta_dict, meta_dict_full = compute_metrics(row["generated_wav"], ref_wav, row["text"], ref_speaker_embedding=speaker_embedding, language=row["language"])
+            tts_wav_path = row["generated_wav"]
+            if not os.path.isfile(tts_wav_path):
+                print(f"WARNING: The file {tts_wav_path} doesn't exits !")
+                missing_files += 1
+                if missing_files > 3:
+                    raise RuntimeError(f"More than 3 wave files are missing for the CSV {args.csv_path}!! Please check it, because It can compromise the evaluation.")
+                continue
+
+            meta_dict, meta_dict_full = compute_metrics(tts_wav_path, ref_wav, row["text"], ref_speaker_embedding=speaker_embedding, language=row["language"], ref_dBFS=ref_dBFS)
             metadata_list.append(meta_dict)
             metadata_list_full.append(meta_dict_full)
 

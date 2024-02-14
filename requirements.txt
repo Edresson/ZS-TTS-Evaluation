@@ -9,3 +9,4 @@ pandas==1.5.3
 huggingface-hub==0.19.4
 numpy==1.24.3
 packaging==23.2
+pydub==0.25.1

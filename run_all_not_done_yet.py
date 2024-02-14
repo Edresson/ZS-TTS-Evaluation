@@ -17,16 +17,17 @@ from tqdm import tqdm
 
 random.seed(0)
 
-EVAL_PATH = "/raid/edresson/dev/Paper/TTS-evaluation-public/Evaluation/"
+EVAL_PATH = "Evaluation/"
 
+samples_files = list(glob(f'{EVAL_PATH}/**/custom_generated_sentences.csv', recursive=True))
 
-
-samples_files = glob(f'{EVAL_PATH}/**/custom_generated_sentences.csv', recursive=True)
+samples_files.sort()
+# samples_files.sort(reverse=True)
 
 for SAMPLES_CSV in tqdm(samples_files):
     metric_file = os.path.join(os.path.dirname(SAMPLES_CSV), "metrics.csv")
-    # if os.path.isfile(metric_file):
-    #     continue
+    if os.path.isfile(metric_file):
+        continue
     os.system(f"python eval_TTS.py --csv_path {SAMPLES_CSV}")
     print("Done and saved at: ", metric_file)
 

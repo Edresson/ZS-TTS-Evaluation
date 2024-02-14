@@ -3,7 +3,7 @@ import jiwer.transforms as tr
 from packaging import version
 import importlib.metadata as importlib_metadata
 
-
+import torch
 import unicodedata
 import sys
 
@@ -63,3 +63,7 @@ def normalize_text(text):
       text = " "
     return text
 
+def torch_rms_norm(wav, db_level=-27.0):
+    r = 10 ** (db_level / 20)
+    a = torch.sqrt((wav.size(-1) * (r**2)) / torch.sum(wav**2))
+    return wav * a
