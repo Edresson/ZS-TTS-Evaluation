@@ -1,12 +1,13 @@
 import random
+import uuid
 import gradio as gr
 import pandas as pd
 from datetime import datetime
 
 mode = "CMOS"
 lang = "en"
-model_a_name = "Mega-TTS2"
-model_b_name = "XTTS_v2.0.2"
+model_a_name = "XTTS_v2.0.2"
+model_b_name = "Mega-TTS2"
 # HierSpeech++
 
 model_a = pd.read_csv(f"Evaluation/{model_a_name}/custom_generated_sentences.csv")
@@ -25,10 +26,10 @@ assert len(merged) == len(model_a) == len(model_b) == 240
 
 
 get_timestamp = lambda : datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-filename = f"./{mode}_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
+filename = f"./CMOS_{mode}_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
 
 with open(filename, "w") as file:
-    file.write("timestamp,score\n")
+    file.write("timestamp,uuid,score\n")
 
 iteration = 0
 
@@ -42,30 +43,38 @@ def sample_random(state):
     iteration += 1
     return A, B
     
-def vote(score, state_vars):
+def vote(score, state_vars, a_audio, b_audio):
+    if a_audio is None or b_audio is None:
+        return (None, None)
     with open(filename, "a+") as f:
-        f.write(f"{get_timestamp()},{str(score) if not state_vars['inverted'] else str(-score)}\n")
+        f.write(f"{get_timestamp()},{state_vars['uid']},{str(score) if not state_vars['inverted'] else str(-score)}\n")
     return sample_random(state_vars)
+
+def init_state():
+    return {"inverted": False, "uid": str(uuid.uuid4())}
     
 with gr.Blocks() as demo:
-    state_vars = gr.State({"inverted": False})
+    state_vars = gr.State(init_state)
     with gr.Column() as col1:
-        gr.Markdown("### CMOS: Comparative Model Opinion Score\n\n"
-                    "This tool is designed to collect human opinions on the quality of two TTS models.\n\n"
+        gr.Markdown("## CMOS: Comparative Model Opinion Score\n\n"
+                    "This tool is designed to collect human opinions on the naturalness of two text-to-speech models.\n\n"
                     "You will be presented with two audio clips, A and B, and you will be asked to score how A sounds compared to B.\n\n"
+                    "The score should reflect how A sounds compared to B **in terms of prosody and naturalness.** (don't focus on audio quality)\n\n"
                     "When you submit a vote, the next pair of audio clips will be presented to you.\n\n"
+                    "**Please use headphones if possible and rate at least 8 pairs of audio clips.**\n\n"
                     "When you are ready, click the start button below to start the evaluation.")
         start_btn = gr.Button(value="Start")
     with gr.Column() as col2:
         #gt_audio = gr.Audio(label="Ground truth", autoplay=True)
-        a_audio = gr.Audio(label="A")
-        b_audio = gr.Audio(label="B")
-        gr.Markdown("### Score how A sounds compared to B:\n\n"
+        a_audio = gr.Audio(label="A", interactive=False)
+        b_audio = gr.Audio(label="B", interactive=False)
+        gr.Markdown("## Score how A sounds compared to B in terms of prosody and naturalness:\n\n"
                     "- 2 <=> A is better\n"
                     "- 1 <=> A is slightly better\n"
                     "- 0 <=> Both are equal\n"
                     "- -1 <=> A is slightly worse\n"
-                    "- -2 <=> A is worse")
+                    "- -2 <=> A is worse\n\n\n"
+                    '<div style="display: flex; justify-content: space-between";margin-top: 20px;><div style="text-align: left">B is better</div><div style="text-align: right">A is better</div></div>')
         score = gr.Slider(minimum=-2, maximum=2, step=1, value=0, info="Score")
         vote_btn = gr.Button(value="Submit vote")
 
@@ -77,7 +86,7 @@ with gr.Blocks() as demo:
 
     vote_btn.click(
         fn=vote,
-        inputs=[score, state_vars],
+        inputs=[score, state_vars, a_audio, b_audio],
         outputs=[a_audio, b_audio],
     )
 
