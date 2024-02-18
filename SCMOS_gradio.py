@@ -25,7 +25,7 @@ assert len(merged) == len(model_a) == len(model_b) == 240
 
 
 get_timestamp = lambda : datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-filename = f"./CMOS_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
+filename = f"./SCMOS_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
 
 with open(filename, "w") as file:
     file.write("timestamp,uuid,score\n")
@@ -38,9 +38,10 @@ def sample_random(state):
     state["inverted"] = True if random.randint(0,1) == 1 else False
     A = row[model_a_name] if not state["inverted"] else row[model_b_name]
     B = row[model_a_name] if state["inverted"] else row[model_b_name]
+    ref = row["speaker_reference"]
     print("Iteration: ", iteration)
     iteration += 1
-    return A, B
+    return A, B, ref
     
 def vote(score, state_vars, a_audio, b_audio):
     if a_audio is None or b_audio is None:
@@ -55,32 +56,32 @@ def init_state():
 with gr.Blocks() as demo:
     state_vars = gr.State(init_state)
     with gr.Column() as col1:
-        gr.Markdown("## CMOS: Comparative Model Opinion Score\n\n"
-                    "This tool is designed to collect human opinions on the naturalness of two text-to-speech models.\n\n"
-                    "You will be presented with two audio clips, A and B, and you will be asked to score how A sounds compared to B.\n\n"
-                    "The score should reflect how A sounds compared to B **in terms of prosody and naturalness.** (don't focus on audio quality)\n\n"
-                    "When you submit a vote, the next pair of audio clips will be presented to you.\n\n"
+        gr.Markdown("## SCMOS: Similarity Comparative Model Opinion Score\n\n"
+                    "This tool is designed to collect human opinions on the voice cloning ability of two text-to-speech models.\n\n"
+                    "You will be presented with two audio clips, A and B, and you will be asked to score how close A sounds to the reference voice compared to B.\n\n"
+                    "When you submit a vote, the next pair of audio clips will be presented to you acompanied by the matching reference.\n\n"
                     "**Please use headphones if possible and rate at least 8 pairs of audio clips.**\n\n"
                     "When you are ready, click the start button below to start the evaluation.")
         start_btn = gr.Button(value="Start")
     with gr.Column() as col2:
-        #gt_audio = gr.Audio(label="Ground truth", autoplay=True)
+        gt_audio = gr.Audio(label="Ground truth", autoplay=True)
         a_audio = gr.Audio(label="A", interactive=False)
         b_audio = gr.Audio(label="B", interactive=False)
-        gr.Markdown("## Score how A sounds compared to B in terms of prosody and naturalness:\n\n"
-                    "- 2 <=> A is better\n"
-                    "- 1 <=> A is slightly better\n"
-                    "- 0 <=> Both are equal\n"
-                    "- -1 <=> A is slightly worse\n"
-                    "- -2 <=> A is worse\n\n\n"
-                    '<div style="display: flex; justify-content: space-between";margin-top: 20px;><div style="text-align: left">B is better</div><div style="text-align: right">A is better</div></div>')
+        gr.Markdown("## Score how close A sounds to the audio reference compared to B.\n\n"
+                    "**Only judge similarity (timber, accent etc...), not audio quality or naturalness.**\n\n"
+                    "- 2 <=> A is closer to reference than B\n"
+                    "- 1 <=> A is slightly closer to reference than B\n"
+                    "- 0 <=> Both are equaly close to reference than B\n"
+                    "- -1 <=> A is slightly farther to reference than B\n"
+                    "- -2 <=> A is farther to reference than B\n\n\n"
+                    '<div style="display: flex; justify-content: space-between";margin-top: 20px;><div style="text-align: left">B is more similar</div><div style="text-align: right">A is more similar</div></div>')
         score = gr.Slider(minimum=-2, maximum=2, step=1, value=0, info="Score")
         vote_btn = gr.Button(value="Submit vote")
 
     start_btn.click(
         fn=sample_random,
         inputs=[state_vars],
-        outputs=[a_audio, b_audio],
+        outputs=[a_audio, b_audio, gt_audio],
     )
 
     vote_btn.click(
