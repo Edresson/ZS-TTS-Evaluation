@@ -25,7 +25,7 @@ assert len(merged) == len(model_a) == len(model_b) == 240
 
 
 get_timestamp = lambda : datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-filename = f"./SCMOS_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
+filename = f"./SCMOS_results_{get_timestamp()}.csv"
 
 with open(filename, "w") as file:
     file.write("timestamp,uuid,score\n")

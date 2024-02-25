@@ -32,7 +32,7 @@ assert len(merged) == len(model_a) == len(model_b) == len(model_c) == 240
 
 
 get_timestamp = lambda : datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-filename = f"./CMOS_{model_a_name}_{model_b_name}_{get_timestamp()}.csv"
+filename = f"./CMOS_results_{get_timestamp()}.csv"
 
 with open(filename, "w") as file:
     file.write("timestamp,uuid,score,against\n")
