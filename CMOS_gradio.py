@@ -35,7 +35,7 @@ get_timestamp = lambda : datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 filename = f"./CMOS_results_{get_timestamp()}.csv"
 
 with open(filename, "w") as file:
-    file.write("timestamp,uuid,score,against\n")
+    file.write("timestamp,uuid,score,against,native\n")
 
 iteration = 0
 
@@ -55,11 +55,11 @@ def sample_random(state):
     iteration += 1
     return Left, Right
     
-def vote(score, state_vars, left_audio, right_audio):
+def vote(score, state_vars, left_audio, right_audio, native):
     if left_audio is None or right_audio is None:
         return (None, None)
     with open(filename, "a+") as f:
-        f.write(f"{get_timestamp()},{state_vars['uid']},{str(score) if state_vars['inverted'] else str(-score)},{state_vars['current_comparison']}\n")
+        f.write(f"{get_timestamp()},{state_vars['uid']},{str(score) if state_vars['inverted'] else str(-score)},{state_vars['current_comparison']},{native}\n")
     return sample_random(state_vars)
 
 def init_state():
@@ -77,7 +77,9 @@ with gr.Blocks() as demo:
                     "The score should reflect your preference **in terms of prosody and naturalness.** (don't focus on audio quality)\n\n"
                     "When you submit a vote, the next pair of audio clips will be presented to you.\n\n"
                     "**Please use headphones if possible and rate at least 8 pairs of audio clips.**\n\n"
+                    "**Please indicate if you are a native english speaker by clicking the ckeckbox.**\n\n"
                     "When you are ready, click the start button below to start the evaluation.")
+        native = gr.Checkbox(label="I am a native speaker")
         start_btn = gr.Button(value="Start")
     with gr.Column() as col2:
         gr.Markdown("## Score how Right sounds compared to Left in terms of prosody and naturalness:\n\n"
@@ -101,7 +103,7 @@ with gr.Blocks() as demo:
 
     vote_btn.click(
         fn=vote,
-        inputs=[score, state_vars, left_audio, right_audio],
+        inputs=[score, state_vars, left_audio, right_audio, native],
         outputs=[left_audio, right_audio],
     )
 
