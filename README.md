@@ -1,4 +1,5 @@
-# ZS-TTS-Leaderboard
+# ZS-TTS-Evaluation
+
 This repository gathers our efforts to evaluate/compare the current Zero-shot Multi-speaker TTS (ZS-TTS) systems using objective metrics.
 
 To compare the models we have used 240 sentences for each supported language from [FLORES+](https://github.com/openlanguagedata/flores).
