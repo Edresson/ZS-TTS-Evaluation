@@ -28,5 +28,11 @@ Additionally, considering that our model was trained in languages that do not us
 ## Reference
 To reference this repository in your work please use the following reference:
 ```
+@article{casanova2024xtts,
+  title={XTTS: a Massively Multilingual Zero-Shot Text-to-Speech Model},
+  author={Casanova, Edresson and Davis, Kelly and G{\"o}lge, Eren and G{\"o}knar, G{\"o}rkem and Gulea, Iulian and Hart, Logan and Aljafari, Aya and Meyer, Joshua and Morais, Reuben and Olayemi, Samuel and others},
+  journal={arXiv preprint arXiv:2406.04904},
+  year={2024}
+}
 
 ```
