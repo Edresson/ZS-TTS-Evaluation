@@ -1,13 +1,15 @@
 jiwer==3.0.3
-TTS==0.22.0
+# TTS==0.22.0
 transformers==4.36.2
 tqdm==4.66.1
-librosa==0.10.0.post2
+# librosa>=0.10.0.post2
 num2words==0.5.13
 faster_whisper>=0.10.0
 pandas==1.5.3
 huggingface-hub==0.19.4
-numpy==1.22.0;python_version<="3.10"
-numpy>=1.24.3;python_version>"3.10"
+# numpy==1.22.0;python_version<="3.10"
+# numpy>=1.24.3;python_version>"3.10"
 packaging==23.2
 pydub==0.25.1
+hangul_romanize
+

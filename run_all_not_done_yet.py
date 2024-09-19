@@ -28,6 +28,6 @@ for SAMPLES_CSV in tqdm(samples_files):
     metric_file = os.path.join(os.path.dirname(SAMPLES_CSV), "metrics.csv")
     if os.path.isfile(metric_file):
         continue
-    os.system(f"python eval_TTS.py --csv_path {SAMPLES_CSV}")
+    os.system(f"CUBLAS_WORKSPACE_CONFIG=:4096:8 python eval_TTS.py --csv_path {SAMPLES_CSV}")
     print("Done and saved at: ", metric_file)
 
