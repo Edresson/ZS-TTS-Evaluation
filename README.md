@@ -8,6 +8,9 @@ To compare the models we have used 240 sentences for each supported language fro
  For each speaker, we randomly selected one audio segment between 3 and 8 seconds to use as a reference during the test sentence generation. 
  We have used these samples to evaluate all languages, that way for non-English languages the models are compared in a cross-lingual way.
 
+## Instalation
+
+Please use the docker image "nvcr.io/nvidian/ac-aiapps/nemo-speechllm:24-02" and then install all requirements with the command "pip install -r requirements.txt"
 
 ## Metrics
 
